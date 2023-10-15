@@ -1,3 +1,5 @@
 # smart_phone_price_analysis
 
-Selecting a proper smartphone is a tiring process for any one. 
+
+Selecting a smartphone in today's tech-savvy world can often be a daunting and tiresome process. The market is inundated with an abundance of brands, each offering a plethora of models with an array of specifications. As a consumer, it's crucial to ensure that you get the best bang for your buck. To aid in this endeavor, we embark on an in-depth analysis of the main specifications that influence the smartphone market. Specifically, we delve into the realms of RAM, storage, and battery capacity to decipher how they impact the price of smartphones and whether there exists a discernible correlation. To facilitate our analysis, we draw upon a comprehensive dataset sourced from Kaggle, containing a wealth of smartphone data from prominent brands such as Apple, Samsung, Huawei, and many more.
+By exploring the relationships between these key specifications and pricing, we aim to provide valuable insights to assist consumers in making informed decisions when navigating the intricate smartphone landscape.
