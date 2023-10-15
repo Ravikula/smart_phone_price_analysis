@@ -1,7 +1,7 @@
 ---
 title: "<span style='font-size: 50px;'>Comparative Analysis of Smartphone Specifications</span> <br><span style='font-size: 30px;'>Finding the Ideal Blend of Features and Price</span>"
 subtitle: ""
-author: "Ravikula Silva - s4022474<br>Buddhi Perera - s4022431<br>Minod Ashinsa - s3988328"
+author: "Ravikula Silva"
 date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
 output:
   slidy_presentation:
@@ -28,10 +28,8 @@ library(readr)
 library(magrittr)
 library(ggplot2)
 
-setwd("C:/Users/Buddhi Perera/Desktop/Assignment_2")
+setwd("/Users/ravikulasilva/Documents/phone_price_analysis")
 df <- read_csv("phone_price.csv")
-
-```
 
 # Introduction
 
