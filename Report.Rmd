@@ -1,0 +1,312 @@
+---
+title: "<span style='font-size: 50px;'>Comparative Analysis of Smartphone Specifications</span> <br><span style='font-size: 30px;'>Finding the Ideal Blend of Features and Price</span>"
+subtitle: ""
+author: "Ravikula Silva - s4022474<br>Buddhi Perera - s4022431<br>Minod Ashinsa - s3988328"
+date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
+output:
+  slidy_presentation:
+    font_adjustment: 0
+    highlight: haddock
+    mathjax: "default"
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+# Use this chunk to quietly load your pacakges
+
+knitr::opts_chunk$set(
+	fig.align = "center",
+	message = FALSE,
+	warning = FALSE
+)
+# Packages loaded in this chunk will not appear in the presentation. 
+
+rm(list=ls())
+
+library(dplyr)
+library(readr)
+library(magrittr)
+library(ggplot2)
+
+setwd("C:/Users/Buddhi Perera/Desktop/Assignment_2")
+df <- read_csv("phone_price.csv")
+
+```
+
+# Introduction
+
+::: {style="text-align: justify;"}
+Our analysis centers on comparing smartphone models based on brand, operating system, price, RAM (Random Access Memory), storage capacity, and battery capacity. Our primary objective is to help consumers find smartphones that offer a desirable balance of specs at an optimal price.
+
+We cover a wide array of brands, including industry giants like Apple, Samsung, Google, Huawei, OnePlus, and more. Brand choice often reflects consumer loyalty and personal preferences.
+
+Our dataset includes smartphones with various operating systems, with iOS and Android being prevalent. The operating system significantly impacts the user experience and app availability.
+
+Price is a paramount consideration for consumers, shaping their purchase decisions. Our dataset meticulously records smartphone prices, aiding in evaluating affordability and perceived value.
+
+RAM is a pivotal hardware specification influencing multitasking and speed. We provide data on RAM capacity to gauge multitasking capabilities.
+
+Storage capacity profoundly affects users' ability to store apps, media, and data. Our dataset catalogs available storage options for assessing individual data needs.
+
+We also include data on battery capacity. A crucial spec, it determines device runtime and performance.
+
+We anticipate using statistical comparisons, rankings, and potentially a scoring system to evaluate spec-to-price trade-offs. This dataset is a valuable resource for informed smartphone purchases, aiding users in finding cost-effective solutions tailored to their needs and budget, optimizing their smartphone experience.
+:::
+
+
+# Problem Statement
+
+::: {style="text-align: justify;"}
+In the rapidly evolving smartphone market, consumers face a multitude of options from various brands, each offering a diverse range of operating systems, price points, RAM capacities, storage options and battery capacities. The challenge lies in making an informed choice that aligns with their individual preferences, needs, and budget constraints. To address this challenge, our study aims to answer the following research question:
+
+"How can consumers make data-driven decisions when selecting a smartphone that best balances brand loyalty, operating system preference, price, RAM capacity, and storage needs, ensuring they obtain the most desirable specifications for an optimal price?"
+
+This problem statement encapsulates the core objective of our dataset analysis, which is to empower consumers with the knowledge and tools necessary to select the right smartphone that perfectly matches their unique requirements, optimizing their overall smartphone experience.
+::: 
+
+# Data
+
+::: {style="text-align: justify;"}
+We sourced the dataset from Kaggle, a popular platform for data science and machine learning enthusiasts. The dataset we used is available at the following link:https://www.kaggle.com/datasets/rkiattisak/mobile-phone-price.
+
+The dataset, titled "Mobile Phone Price," contains information about the prices of various mobile phones from different brands. It includes essential details such as storage capacity, RAM, screen size, camera specifications, battery capacity, and the retail price of each device.
+::: 
+
+# Data Cont.
+
+::: {style="text-align: justify;"}
+Dataset Description: The dataset is structured with the following columns:
+
+Brand : The manufacturer of the mobile phone.<br>
+Model : The name of the mobile phone model.<br>
+Storage (GB) : The amount of storage space available on the phone in gigabytes.<br>
+RAM (GB) : The amount of RAM available on the phone in gigabytes.<br>
+Screen Size (inches) : The size of the phone's display screen in inches.<br>
+Camera (MP) : The megapixel count of the phone's rear camera(s).<br>
+Battery Capacity (mAh) : The capacity of the phone's battery in milliampere hours.<br>
+Price ($) : The retail price of the phone in US dollars.<br>
+:::
+
+
+# Descriptive Statistics and Visualisation
+
+::: {style="text-align: justify;"}
+Here is a detailed summary of the Data set
+:::
+
+```{r}
+df %>% summary()
+```
+
+# Decsriptive Statistics Cont.
+
+```{r}
+brand_perc <- df$Brand %>% table()%>% prop.table()*100
+brand_perc %>% barplot(main = "Percentage of Smartphone Brands",ylab = "Percent(%)", ylim=c(0,20) , cex.lab = 1.2, cex.axis =1.2, las=2)
+```
+
+::: {style="text-align: justify;"}
+Here is a graph that breaks down smartphone brands and the percentage number of models they offer. It's a snapshot of the smartphone market and the variety of choices available to consumers. Samsung leads the pack, followed by Xiaomi, while Sony and Cat have the fewest offerings in the market.
+:::
+
+# Decsriptive Statistics Cont.
+
+```{r}
+os_perc <- df$OS %>% table()%>% prop.table()*100
+os_perc %>% barplot(main = "Percentage of Smartphone OS",ylab = "Percent", ylim=c(0,100) , xlab="OS", cex.lab = 1.2, cex.axis =1.2)
+```
+
+::: {style="text-align: justify;"}
+This graph highlighting the distribution of operating systems between Android and iOS. Android dominates the landscape with a significantly higher percentage compared to iOS, showcasing its widespread presence in the smartphone market
+:::
+
+# Decsriptive Statistics Cont.
+
+```{r}
+ram_perc <- df$RAM %>% table()%>% prop.table()*100
+ram_perc %>% barplot(main = "Percentage of Smartphone RAM",ylab = "Percent", ylim=c(0,40) , xlab="RAM (GB)", cex.lab = 1.2, cex.axis =1.2,las=1)
+```
+
+::: {style="text-align: justify;"}
+Let's look at the graph that shows how RAM is distributed in smartphones. It reveals the variations of RAM sizes, with 4GB, 6GB, and 8GB taking the lead, while 16GB and 5GB RAM configurations follows in the end.
+:::
+
+```{r setup_2, include=FALSE}
+tab1 <- table(df$Brand,df$RAM)
+tab1
+tab2 <- tab1 %>% prop.table(margin=2)
+tab2
+
+df %>% summarise(Min = min(RAM,na.rm = TRUE),
+                 Q1 = quantile(RAM,probs = .25,na.rm = TRUE),
+                 Median = median(RAM, na.rm = TRUE),
+                 Q3 = quantile(RAM,probs = .75,na.rm = TRUE), 
+                 Max = max(RAM,na.rm = TRUE),
+                 Mean = mean(RAM, na.rm = TRUE),
+                 SD = sd(RAM, na.rm = TRUE),
+                 n = n(),
+                 Missing = sum(is.na(RAM)))
+
+
+
+df %>% summarise(Min = min(`Price ()`,na.rm = TRUE),
+                 Q1 = quantile(`Price ()`,probs = .25,na.rm = TRUE),
+                 Median = median(`Price ()`, na.rm = TRUE),
+                 Q3 = quantile(`Price ()`,probs = .75,na.rm = TRUE), 
+                 Max = max(`Price ()`,na.rm = TRUE),
+                 Mean = mean(`Price ()`, na.rm = TRUE),
+                 SD = sd(`Price ()`, na.rm = TRUE),
+                 n = n(),
+                 Missing = sum(is.na(`Price ()`)))
+
+```
+
+# Decsriptive Statistics Cont.
+
+```{r}
+boxplot(df$`Price ()`,main="Box plot of Smart Phone Price Ranges  ",ylab= "Price ($)")
+```
+
+::: {style="text-align: justify;"}
+Here's a box plot that  provides insights into smartphone price ranges. The minimum price starts at $99, with the first quartile at $199, median at $299, third quartile at $499, and a maximum of $1999. The average price stands at $408, with a standard deviation of $300, based on a dataset of 407 smartphone models.
+:::
+
+# Decsriptive Statistics Cont.
+
+```{r}
+df %>% boxplot(`Price ()`~Brand ,data = ., main="Box Plot of Smart Phone Prices by Band", 
+               ylab="Price ($)",xlab = "",horizontal=FALSE, col = "skyblue",las=2)
+```
+
+::: {style="text-align: justify;"}
+These box plots reveal central tendencies and variations in smartphone prices, including the interquartile range (IQR) and median values. Apple and Samsung offer a wide price range, spanning $399 to $1,299 and $129 to $1,199, with mean prices around $779 and $505, respectively. Although Huawei offers a wider price range, ranging from $199 to $1399 with a mean of $777 price range, choice of number of smartphone models is limited. Motorola, Nokia, Realme, Oppo, Vivo and Xiomi provides smartphones with lower price range. These insights provides a detailed analysis of the competitive dynamics within the smartphone market, aiding consumers in informed decision-making based on their budget and brand preferences.
+:::
+
+
+```{r setup_3, include=FALSE}
+breaks <- c(0, 500, 1000, 1500, Inf)
+labels <- c("<$500", "$500-$1000", "$1000-$1500", "$1500<")
+df$price_ranges <- cut(df$`Price ()`, breaks = breaks, labels = labels, right = FALSE)
+
+tab1 <- table(df$Brand,df$price_ranges)
+tab1
+```
+# Decsriptive Statistics Cont.
+
+```{r}
+tab2 <- tab1 %>% prop.table(margin=1)*100
+tab2 <- round(tab2, digits = 2)
+tab2
+```
+
+::: {style="text-align: justify;"}
+The data illustrates the percentage distribution of smartphones from various brands across distinct price ranges. Notably, it highlights the diverse pricing strategies adopted by these brands. Apple, Google and OnePlus has a variety of phones falling within the $500-$1000 range, catering to a broad consumer base. In contrast, brands like Asus focus exclusively on the mid-range category, while CAT , Xiaomi and Realme position themselves in the sub-$500 segment. Huawei, Samsung, Sony and Apple stand out with exclusively premium offerings at $1000 and above. Brands like Oppo and Vivo strike a balance, offering smartphones across multiple price segments. This data sheds light on how brands strategically diversify their product offerings to cater to consumers with varying budget preferences, providing valuable insights into the competitive dynamics of the smartphone market.
+::: 
+
+# Hypothesis Testing
+
+::: {style="text-align: justify;"}
+
+We used one sample t -test to perform the Hypothesis test to understand the correlation between smartphone specifications and price. We consider Storage capacity, RAM size and battery capacity as the specification variables.
+
+**Price vs Storage Capacity**
+
+Null Hypothesis (H0): There is no statistically significant correlation between smartphone price and storage capacity.
+
+Alternative Hypothesis (H1): There is a statistically significant correlation between smartphone price and storage capacity.
+
+This test aims to determine whether smartphone cost is influenced by storage capacity. We employ correlation analysis, a statistical method quantifying the relationship between these variables.
+:::
+
+```{r}
+cor(df$`Price ()`,df$Storage)
+```
+
+::: {style="text-align: justify;"}
+With a strong correlation value of 0.7110502, we reject the null hypothesis. This indicates that, within the given data there is enough evidence to support the alternative hypothesis. The results provide statistical support for the presence of a significant positive correlation between smartphone price and storage capacity.
+:::
+
+# Hypthesis Testing Cont.
+
+```{r}
+plot(df$Storage,df$`Price ()`,xlab="Storage (GB)",ylab="Price ($)",main='Storage Vs Price')
+```
+
+::: {style="text-align: justify;"}
+The data reveals a compelling relationship between smartphone storage and pricing. In this scatter plot, we observe a clear upward trend, indicating that as storage capacity increases, smartphone prices also rise. This positive correlation emphasizes the substantial influence of storage on pricing, with larger storage capacities associated with higher costs. These findings are crucial for consumers, as they highlight the importance of storage considerations when making informed decisions about smartphone purchases, ensuring their specific needs and budget are met.
+:::
+
+# Hypthesis Testing Cont.
+
+::: {style="text-align: justify;"}
+Continuing our analysis, the next hypothesis test focuses on exploring the potential correlation between smartphone price and RAM size. 
+
+**Price vs RAM size**
+
+Null Hypothesis (H0): There is no statistically significant correlation between smartphone price and RAM size.
+
+Alternative Hypothesis (H1): There is a statistically significant correlation between smartphone price and RAM size.
+
+This test aims to determine whether smartphone cost is influenced by amount of RAM they possess. We employ correlation analysis, a statistical method quantifying the relationship between these variables
+::: 
+
+```{r}
+cor(df$`Price ()`,df$RAM)
+```
+
+::: {style="text-align: justify;"}
+Given a strong correlation value of 0.6371723, the null hypothesis is rejected. This indicates that, within the dataset and, substantial evidence supports the alternative hypothesis. The findings offer statistical confirmation of a meaningful correlation between smartphone price and RAM size.
+:::
+
+# Hypthesis Testing Cont.
+
+```{r}
+plot(df$RAM,df$`Price ()`,xlab="RAM (GB)",ylab="Price ($)",main='RAM Vs Price')
+```
+
+::: {style="text-align: justify;"}
+The dataset illustrating smartphone RAM sizes and their corresponding prices reveals a pronounced positive correlation. In a scatter plot with RAM size on the x-axis and price on the y-axis, a clear upward trend emerges: as RAM size increases, smartphone prices also exhibit a notable rise. This observation underscores the substantial impact of RAM capacity on smartphone pricing, which carries significance for consumers seeking specific performance and for manufacturers aiming to position their products in the market effectively.
+:::
+
+# Hypthesis Testing Cont.
+
+::: {style="text-align: justify;"}
+In this project, we are considering three hypothetical tests, each focused on specific smartphone attributes. The first hypothesis explores the correlation between smartphone price and storage capacity, the second tests the relationship between price and RAM size, and the third examines the association between price and battery size.
+
+**Price vs Battery Size**
+
+- Null Hypothesis (H0): There is no statistically significant correlation between smartphone price and battery size.
+- Alternative Hypothesis (H1): There is a statistically significant correlation between smartphone price and battery size.
+
+This test aims to determine whether a meaningful relationship exists between smartphone price and battery size, providing insights into how this attribute impacts pricing. We employ correlation analysis, a statistical method quantifying the relationship between these variables
+::: 
+
+```{r}
+cor(df$`Price ()`,df$`Battery Capacity (mAh)`)
+```
+
+::: {style="text-align: justify;"}
+With a moderate negative correlation coefficient of -0.3965814, the null hypothesis is rejected. It suggests that there is a negative relationship between smartphone price and battery size. The negative correlation value indicates that, in this analysis, there is an inverse association between these two variables.
+:::
+
+# Hypthesis Testing Cont.
+```{r}
+plot(df$`Battery Capacity (mAh)`,df$`Price ()`,xlab="Battery Capacity (mAh)",ylab="Price ($)",main='Battery Capacity Vs Price')
+```
+
+::: {style="text-align: justify;"}
+The scatter plot depicting "Battery Capacity (mAh)" vs. "Price" shows a moderate negative correlation. Data points are widely dispersed, indicating that battery capacity does not strongly dictate a device's price. Factors like brand, model, features, and market competition have a more significant influence on pricing. In essence, the plot underscores the intricate nature of pricing in the mobile device market, driven by diverse factors beyond battery capacity.
+:::
+
+# Discussion
+
+The smartphone market consist of a vast range of devices with diverse specifications, posing a challenge for consumers in selecting the ideal combination to meet their needs. 
+
+A hypothesis test of the data reveals a strong positive correlation between RAM and storage capacity with smartphone prices, indicating that higher RAM and larger storage lead to higher pricing. However, there's a slight negative correlation for storage capacity, possibly due to varying factors affecting pricing. Hence consumers are advised to balance their requirements for RAM, storage, and price to maximize value.
+
+Additionally, brand reputation also impacts pricing, with established brands commanding higher prices, even with similar specifications. Therefore, consumers should consider both specs and brand when making purchasing decisions.
+
+# References
+
+- https://www.kaggle.com/
+- https://latrobe.libguides.com/maths/hypothesis-testing#
