@@ -5,7 +5,7 @@ library(readr)
 library(magrittr)
 library(ggplot2)
 
-setwd("C:/Users/Buddhi Perera/Desktop/Assignment_2")
+setwd("/Users/ravikulasilva/Documents/phone_price_analysis")
 df <- read_csv("phone_price.csv")
 
 df %>% summary()
